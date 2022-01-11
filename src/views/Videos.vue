@@ -136,7 +136,7 @@ export default {
   data(){
     return{
       videos:[],
-      loading: true
+      loading: false
     }
   },
   components: {
@@ -156,12 +156,13 @@ export default {
       this.refresher.complete()
     },
     async fetchVideos(){
+      this.loading = true
       this.videos = await casteaching.videos()
+      this.loading = false
     }
   },
   async created() {
     this.fetchVideos()
-    this.loading = false
   },
   mounted() {
     this.refresher = document.getElementById('refresher')
