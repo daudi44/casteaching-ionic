@@ -75,13 +75,13 @@ export default {
   },
   async created() {
     this.video = await casteaching.video.show(this.$route.params.id)
-    // this.video = {
-    //   id: 1,
-    //   title: "Ubuntu 101",
-    //   description: "# Here description",
-    //   url: "https://www.youtube.com/embed/w8j07_DBl_I",
-    //   published_at: "2020-12-13T20:00:00.000000Z",
-    // }
+     this.video = {
+       id: 1,
+       title: "Ubuntu 101",
+       description: "# Here description",
+       url: "https://www.youtube.com/embed/w8j07_DBl_I",
+       published_at: "2020-12-13T20:00:00.000000Z",
+     }
   }
 }
 </script>

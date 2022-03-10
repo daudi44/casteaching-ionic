@@ -152,8 +152,8 @@ export default {
   },
   methods:{
     async refresh(){
-      this.fetchVideos()
-      this.refresher.complete()
+      await this.fetchVideos()
+      await this.refresher.complete()
     },
     async fetchVideos(){
       this.loading = true
@@ -162,7 +162,7 @@ export default {
     }
   },
   async created() {
-    this.fetchVideos()
+    await this.fetchVideos()
   },
   mounted() {
     this.refresher = document.getElementById('refresher')
