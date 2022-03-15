@@ -119,7 +119,6 @@
 </template>
 
 <script>
-import casteaching from "@acacha/casteaching";
 import {
   IonAvatar,
   IonContent,
@@ -152,17 +151,19 @@ export default {
   },
   methods:{
     async refresh(){
-      this.fetchVideos()
-      this.refresher.complete()
+      await this.fetchVideos()
+      await this.refresher.complete()
     },
-    async fetchVideos(){
-      this.loading = true
-      this.videos = await casteaching.videos()
-      this.loading = false
+    async fetchVideos(){      
+      try {
+        this.videos = await this.casteaching.videos()
+      } catch (error) {
+        console.log(error);
+      }
     }
   },
   async created() {
-    this.fetchVideos()
+    await this.fetchVideos()
   },
   mounted() {
     this.refresher = document.getElementById('refresher')

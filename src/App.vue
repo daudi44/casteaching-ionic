@@ -4,8 +4,8 @@
       <ion-menu content-id="main-content" type="overlay">
         <ion-content>
           <ion-list id="inbox-list">
-            <ion-list-header>Inbox</ion-list-header>
-            <ion-note>hi@ionicframework.com</ion-note>
+            <ion-list-header>Welcome!</ion-list-header>
+            <ion-note>Casteaching Ionic Daniel Audí Bielsa</ion-note>
   
             <ion-menu-toggle auto-hide="false" v-for="(p, i) in appPages" :key="i">
               <ion-item @click="selectedIndex = i" router-direction="root" :router-link="p.url" lines="none" detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
@@ -13,15 +13,6 @@
                 <ion-label>{{ p.title }}</ion-label>
               </ion-item>
             </ion-menu-toggle>
-          </ion-list>
-  
-          <ion-list id="labels-list">
-            <ion-list-header>Labels</ion-list-header>
-  
-            <ion-item v-for="(label, index) in labels" lines="none" :key="index">
-              <ion-icon slot="start" :ios="bookmarkOutline" :md="bookmarkSharp"></ion-icon>
-              <ion-label>{{ label }}</ion-label>
-            </ion-item>
           </ion-list>
         </ion-content>
       </ion-menu>
@@ -35,6 +26,7 @@ import { IonApp, IonContent, IonIcon, IonItem, IonLabel, IonList, IonListHeader,
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { archiveOutline, archiveSharp, bookmarkOutline, bookmarkSharp, heartOutline, heartSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, trashOutline, trashSharp, warningOutline, warningSharp } from 'ionicons/icons';
+import store from "./store";
 
 export default defineComponent({
   name: 'App',
@@ -52,65 +44,29 @@ export default defineComponent({
     IonRouterOutlet, 
     IonSplitPane,
   },
+  data() {
+    return {
+      appPages: []
+    }
+  },
+  created() {
+    this.emitter.on('login',() => {
+      this.setAppPages()
+    });
+    this.emitter.on('logout',() => {
+      this.setAppPages()
+    });
+  },
+  async mounted() {
+    this.setAppPages()
+  },
   setup() {
     const selectedIndex = ref(0);
-    const appPages = [
-      {
-        title: 'Inbox',
-        url: '/folder/Inbox',
-        iosIcon: mailOutline,
-        mdIcon: mailSharp
-      },
-      {
-        title: 'Video 1',
-        url: '/videos/1',
-        iosIcon: mailOutline,
-        mdIcon: mailSharp
-      },
-      {
-        title: 'Videos',
-        url: '/videos',
-        iosIcon: paperPlaneOutline,
-        mdIcon: paperPlaneSharp
-      },
-      {
-        title: 'Favorites',
-        url: '/folder/Favorites',
-        iosIcon: heartOutline,
-        mdIcon: heartSharp
-      },
-      {
-        title: 'Archived',
-        url: '/folder/Archived',
-        iosIcon: archiveOutline,
-        mdIcon: archiveSharp
-      },
-      {
-        title: 'Trash',
-        url: '/folder/Trash',
-        iosIcon: trashOutline,
-        mdIcon: trashSharp
-      },
-      {
-        title: 'Spam',
-        url: '/folder/Spam',
-        iosIcon: warningOutline,
-        mdIcon: warningSharp
-      }
-    ];
-    const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
-    
-    const path = window.location.pathname.split('folder/')[1];
-    if (path !== undefined) {
-      selectedIndex.value = appPages.findIndex(page => page.title.toLowerCase() === path.toLowerCase());
-    }
     
     const route = useRoute();
     
     return { 
       selectedIndex,
-      appPages, 
-      labels,
       archiveOutline, 
       archiveSharp, 
       bookmarkOutline, 
@@ -126,6 +82,55 @@ export default defineComponent({
       warningOutline, 
       warningSharp,
       isSelected: (url) => url === route.path ? 'selected' : ''
+    }
+  },
+  methods: {
+    async setAppPages() {
+      this.appPages = []
+      const user = await store.get('user')
+      if (user) {
+        this.appPages.push(
+            {
+              title: 'User Profile',
+              url: '/user',
+              iosIcon: mailOutline,
+              mdIcon: mailSharp
+            })
+        this.appPages.push({
+          title: 'Dashboard',
+          url: '/dashboard',
+          iosIcon: mailOutline,
+          mdIcon: mailSharp
+        })
+      }
+      if (!user) {
+        this.appPages.push({
+          title: 'Login',
+          url: '/login',
+          iosIcon: mailOutline,
+          mdIcon: mailSharp
+        })
+      } else {
+        this.appPages.push({
+          title: 'Logout',
+          url: '/logout',
+          iosIcon: mailOutline,
+          mdIcon: mailSharp
+        })
+      }
+
+      this.appPages.push({
+        title: 'Video 1',
+        url: '/videos/1',
+        iosIcon: mailOutline,
+        mdIcon: mailSharp
+      })
+      this.appPages.push({
+        title: 'Videos',
+        url: '/videos',
+        iosIcon: paperPlaneOutline,
+        mdIcon: paperPlaneSharp
+      })
     }
   }
 });
