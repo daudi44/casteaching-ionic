@@ -50,10 +50,13 @@ export default ({
         IonButton
     },
     methods: {
-        logout(){
-            store.set('token', null)
-            store.set('user', null)
-        }
+      async logout() {
+        await store.set('token', null)
+        const oldUser = await store.get('user')
+        await store.set('user', null)
+        this.emitter.emit('logout',oldUser)
+        this.$router.push('/user')
+      }
     }
 })
 </script>

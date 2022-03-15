@@ -54,19 +54,18 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach(async (to,from,next)=>{
+router.beforeEach(async (to, from, next) => {
   var authenticated = false;
-
-  if(await store.get('user') != null)
+  const user = await store.get('user')
+  if (user !== null)
     authenticated = true;
-  
   if (to.meta.private && !authenticated) {
     next({
       name: 'login',
       params: {
-        wantedRoute: to.fullPath,
+          wantedRoute: to.fullPath,
       },
-    }) 
+    })
     return
   }
   next()

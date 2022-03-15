@@ -53,8 +53,6 @@ import{
 } from '@ionic/vue';
 
 import {Device} from '@capacitor/device';
-//import casteaching from '@acacha/casteaching';
-import axios from 'axios';
 import store from '@/store';
 
 export default {
@@ -81,67 +79,28 @@ export default {
       }
     },
     methods: {
-      async login(){
-        const info = await Device.getInfo();
-        let token = null
-        const device_name = (info && info.model) || 'TokenCasteachingIonic'
-        /* try{
-          token = casteaching.login(this.email,this.password,device_name);
-        }catch(error){
-          console.log(error)
-        } */
-
-        const apiClient = axios.create({
-          baseURL: 'https://casteaching.danielaudibielsa.codes/api',
-          withCredentials: true,
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          }
-        })
-        const postData = {
-          email: this.email,
-          password: this.password,
-          device_name: device_name
-        }
-        let response = null        
-        let response2 = null    
-        try {
-          response = await apiClient.post('/sanctum/token', postData)
-        } catch (error) {
-          console.log(error)
-        }
-        token = response.data
-
-        const axiosClient = axios.create({
-          baseURL: 'https://casteaching.danielaudibielsa.codes/api',
-          withCredentials: true,
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token
-          }
-        })
-
-        console.log("si")
-        console.log(postData)
-        try{
-          response2 = await axiosClient.get('/user', postData)
-        }catch(error){
-          console.log(error)
-        }
-        console.log(response2)
-        const user = response2.data
-        console.log(user)
-
-        store.set('token', token)
-        store.set('user', user)
-        console.log(store.user)
-
-        let path = '/user'
-        if(this.$route.params && this.$route.params.wantedRoute) path = this.$route.params.wantedRoute
-        this.$router.push({ path })        
-
+    async login() {
+      const info = await Device.getInfo();
+      let token = null
+      const device_name = (info && info.name) || 'TokenGeneric'
+      try {
+         token = await this.casteaching.login(this.email,this.password,device_name)
+         this.casteaching.setToken(token)
+      } catch (error) {
+         console.log(error);
+      }
+      let user
+      try {
+        user = await this.casteaching.user()
+      } catch (error) {
+        console.log(error);
+      }
+      await store.set('token', token)
+      await store.set('user', user)
+      this.emitter.emit('login',user)
+      let path = '/user'
+      if(this.$route.params && this.$route.params.wantedRoute) path = this.$route.params.wantedRoute
+      this.$router.push({ path })
       }
     }
 }

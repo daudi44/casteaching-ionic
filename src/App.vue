@@ -14,15 +14,6 @@
               </ion-item>
             </ion-menu-toggle>
           </ion-list>
-  
-          <ion-list id="labels-list">
-            <ion-list-header>Labels</ion-list-header>
-  
-            <ion-item v-for="(label, index) in labels" lines="none" :key="index">
-              <ion-icon slot="start" :ios="bookmarkOutline" :md="bookmarkSharp"></ion-icon>
-              <ion-label>{{ label }}</ion-label>
-            </ion-item>
-          </ion-list>
         </ion-content>
       </ion-menu>
       <ion-router-outlet id="main-content"></ion-router-outlet>
@@ -58,19 +49,24 @@ export default defineComponent({
       appPages: []
     }
   },
+  created() {
+    this.emitter.on('login',() => {
+      this.setAppPages()
+    });
+    this.emitter.on('logout',() => {
+      this.setAppPages()
+    });
+  },
   async mounted() {
     this.setAppPages()
   },
   setup() {
     const selectedIndex = ref(0);
-
-    const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
     
     const route = useRoute();
     
     return { 
       selectedIndex,
-      labels,
       archiveOutline, 
       archiveSharp, 
       bookmarkOutline, 
@@ -93,12 +89,6 @@ export default defineComponent({
       this.appPages = []
       const user = await store.get('user')
       if (user) {
-        this.appPages.push({
-          title: 'Dashboard',
-          url: '/dashboard',
-          iosIcon: mailOutline,
-          mdIcon: mailSharp
-        })
         this.appPages.push(
             {
               title: 'User Profile',
@@ -106,6 +96,12 @@ export default defineComponent({
               iosIcon: mailOutline,
               mdIcon: mailSharp
             })
+        this.appPages.push({
+          title: 'Dashboard',
+          url: '/dashboard',
+          iosIcon: mailOutline,
+          mdIcon: mailSharp
+        })
       }
       if (!user) {
         this.appPages.push({
