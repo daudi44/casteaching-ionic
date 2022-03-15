@@ -11,16 +11,14 @@ const store = new Storage();
 })();
 
 export default{
-    debug:false,
-    user:null,
-    token:null,
-    async get(state){
-        if(this.debug) console.log('getMessageAction triggered with', state)
-        return await store.get(state);
-    },
-    async set(state,value){
-        if(this.debug) console.log('setMessageAction triggered with', state, value)
-        this[state] = value
-        await store.set(state, value);
-    },
+  debug: false,
+  async get(state) {
+      if (this.debug) console.log('getMessageAction', state)
+      return await store.get(state);
+  },
+  async set(state,value) {
+      if (this.debug) console.log('setMessageAction', state, value)
+      this[state] = value
+      await store.set(state,value);
+  },
 }
