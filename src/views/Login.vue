@@ -31,6 +31,7 @@
           <ion-button @click="login">Login</ion-button>
         </ion-card-content>
       </ion-card>
+
     </ion-content>
   </ion-page>
 </template>
@@ -49,7 +50,8 @@ import{
     IonLabel,
     IonItem,
     IonInput,
-    IonButton
+    IonButton,
+    toastController
 } from '@ionic/vue';
 
 import {Device} from '@capacitor/device';
@@ -94,6 +96,15 @@ export default {
         user = await this.casteaching.user()
       } catch (error) {
         console.log(error);
+
+       const toast = await toastController.create({
+          color: 'dark',
+          duration: 2000,
+          message: "Atenció, has introduït un usuari i/o contrasenya incorrectes",
+          showCloseButton: true,
+        });
+
+        await toast.present();
       }
       await store.set('token', token)
       await store.set('user', user)
