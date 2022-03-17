@@ -14,12 +14,18 @@
         <ion-toolbar>
           <ion-title size="large">Video {{ $route.params.id }}</ion-title>
         </ion-toolbar>
-      </ion-header>
-
-    <div id="container">
-        <h1>{{this.user && this.user.name}}</h1>
-        USER HERE
-    </div>
+      </ion-header>    
+      <div id="container">
+          <h1>{{this.user && this.user.name}}</h1>
+            <ion-avatar slot="start">
+              <img :src="this.user.profile_photo_url">
+            </ion-avatar>    
+            <ion-list>
+              <ion-item>
+                <ion-label>Email: {{this.user && this.user.email}}</ion-label>
+              </ion-item>
+            </ion-list>        
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -59,3 +65,9 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+#container{
+  margin-left: 2cm;
+}
+</style>
