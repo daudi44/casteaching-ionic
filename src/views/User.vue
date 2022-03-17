@@ -24,6 +24,9 @@
               <ion-item>
                 <ion-label>Email: {{this.user && this.user.email}}</ion-label>
               </ion-item>
+              <ion-item>
+                <ion-button @click="refresh">Refresh</ion-button>
+              </ion-item>
             </ion-list>        
       </div>
     </ion-content>
@@ -38,7 +41,13 @@ import{
     IonToolbar,
     IonTitle,
     IonContent,
-    IonMenuButton
+    IonMenuButton,
+    toastController,
+    IonList,
+    IonItem,
+    IonButton,
+    IonLabel,
+    IonAvatar
 } from '@ionic/vue';
 
 import store from '../store';
@@ -52,7 +61,12 @@ export default {
         IonToolbar,
         IonTitle,
         IonContent,
-        IonMenuButton
+        IonMenuButton,
+        IonList,
+        IonItem,
+        IonButton,
+        IonLabel,
+        IonAvatar
     },
     data(){
       return {
@@ -62,6 +76,26 @@ export default {
     async mounted (){
       this.user = await store.get('user')
       console.log(await store.get('user'))
+    },
+    methods: {
+      async refresh(){
+        try {
+          await store.set('user', await this.casteaching.user())
+          console.log(await this.casteaching.user())
+          this.user = await store.get('user')
+        } catch (error) {
+          console.log(error);
+
+        const toast = await toastController.create({
+            color: 'dark',
+            duration: 2000,
+            message: "Ha hagut un problema al refrescar les dades del usuari",
+            showCloseButton: true,
+          });
+
+          await toast.present();
+        }
+      }
     }
 }
 </script>
